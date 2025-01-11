@@ -1,0 +1,55 @@
+version: 0.2
+
+phases:
+  # Install phase: Installing dependencies (Maven, Docker)
+  install:
+    runtime-versions:
+      java: openjdk17  # Use Java 17 (or change it to your Java version)
+      docker: 19       # Ensure Docker is available in the CodeBuild environment
+    commands:
+      # Installing Maven if it's not already available
+      echo Installing Maven...
+      curl -sL https://archive.apache.org/dist/maven/maven-3/3.8.1/binaries/apache-maven-3.8.1-bin.tar.gz | tar -xz -C /usr/local
+      ln -s /usr/local/apache-maven-3.8.1/bin/mvn /usr/bin/mvn
+      mvn --version  # Confirm Maven installation
+
+  # Pre-build phase: Set up login for Amazon ECR
+  pre_build:
+    commands:
+      # Log in to Amazon ECR repository using AWS CLI
+      echo Logging in to Amazon ECR...
+      $(aws ecr get-login --no-include-email --region ap-south-1)
+
+  # Build phase: Compile the Java app and build the Docker image
+  build:
+    commands:
+      # Build the Java application using Maven (skip tests for faster build)
+      echo Building the Java application...
+      mvn clean package -DskipTests
+
+      # Build the Docker image for the Java application
+      echo Building Docker image...
+      docker build -t javadeployment .
+
+  # Post-build phase: Tag and push Docker image to ECR
+  post_build:
+    commands:
+      # Define ECR repository URI
+      IMAGE_URI=443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment:latest
+
+      # Tag the Docker image
+      echo Tagging Docker image with ECR URI...
+      docker tag javadeployment:latest $IMAGE_URI
+
+      # Push the Docker image to the ECR repository
+      echo Pushing Docker image to ECR...
+      docker push $IMAGE_URI
+
+artifacts:
+  files:
+    - target/*.jar  # Optionally, upload the JAR file created during the build (not required for this specific use case)
+
+cache:
+  paths:
+    - '/root/.m2/**/*'  # Cache Maven dependencies for faster builds
+
