@@ -1,18 +1,15 @@
 version: 0.2
 
 phases:
-  # Install phase: Installing dependencies (Maven, Docker)
   install:
     runtime-versions:
       java: corretto17
     commands:
       # Installing Maven if it's not already available
-      echo Installing Maven
   # Pre-build phase: Set up login for Amazon ECR
   pre_build:
     commands:
       # Log in to Amazon ECR repository using AWS CLI
-      echo Logging in to Amazon ECR...
       aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment
   build:
     commands:
