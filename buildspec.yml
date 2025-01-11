@@ -15,4 +15,7 @@ phases:
     commands:
       # Build the Java application using Maven (skip tests for faster build)
       echo Building the Java application...
+      IMAGE_TAG="$CODEBUILD_BUILD_ID"
       mvn clean install
+      docker build -t 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment:$IMAGE_TAG .
+      docker push 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment:$IMAGE_TAG
