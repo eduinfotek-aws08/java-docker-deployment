@@ -25,12 +25,10 @@ phases:
     commands:
       # Build the Java application using Maven (skip tests for faster build)
       echo Building the Java application...
-      mvn clean package -DskipTests
-
+      mvn clean install
       # Build the Docker image for the Java application
       echo Building Docker image...
-      docker build -t javadeployment .
-
+      docker build -t javadeployment 
   # Post-build phase: Tag and push Docker image to ECR
   post_build:
     commands:
