@@ -1,21 +1,23 @@
 version: 0.2
-
 phases:
   install:
     runtime-versions:
       java: corretto17
-    commands:
-      # Installing Maven if it's not already available
-  # Pre-build phase: Set up login for Amazon ECR
-  pre_build:
-    commands:
-      # Log in to Amazon ECR repository using AWS CLI
-      aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment
   build:
     commands:
-      # Build the Java application using Maven (skip tests for faster build)
-      echo Building the Java application...
-      IMAGE_TAG="$CODEBUILD_BUILD_ID"
-      mvn clean install
-      docker build -t 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment:$IMAGE_TAG .
-      docker push 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment:$IMAGE_TAG
+      - echo "Deployment Begins..$LAMBDA_ENVIRONMENT"
+      - |
+        set -x  # Enable verbose output
+            # Logic for dev environment
+            echo "Running logic for dev environment."
+            ls -la
+            mvn clean install
+            echo "Login to Amazon ECR"
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment
+            echo "Building Docker image..."
+            docker build -t 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment:dev-ecs-latest .
+            echo "adding tag Docker image "
+            docker tag 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment:dev-ecs-latest $ECR_REPO_URL:dev-ecs-$CODEBUILD_BUILD_NUMBER
+            echo "Pushing Docker image to Amazon ECR"
+            docker push 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment:dev-ecs-latest
+            docker push 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment:dev-ecs-$CODEBUILD_BUILD_NUMBER
