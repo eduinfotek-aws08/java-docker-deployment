@@ -13,7 +13,7 @@ phases:
     commands:
       # Log in to Amazon ECR repository using AWS CLI
       echo Logging in to Amazon ECR...
-      $(aws ecr get-login --no-include-email --region ap-south-1)
+      aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment
   build:
     commands:
       # Build the Java application using Maven (skip tests for faster build)
