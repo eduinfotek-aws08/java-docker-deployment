@@ -15,9 +15,10 @@ phases:
             echo "Login to Amazon ECR"
             aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment
             echo "Building Docker image..."
-            docker build -t 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment:dev-ecs-latest .
+            docker build -t 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment .
             echo "adding tag Docker image "
-            docker tag 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment:dev-ecs-latest $ECR_REPO_URL:dev-ecs-$CODEBUILD_BUILD_NUMBER
+            docker tag 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment:latest 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment:ecs-latest
+            docker tag 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment:latest $ECR_REPO_URL:dev-ecs-$CODEBUILD_BUILD_NUMBER
             echo "Pushing Docker image to Amazon ECR"
-            docker push 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment:dev-ecs-latest
+            docker push 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment:ecs-latest
             docker push 443370689809.dkr.ecr.ap-south-1.amazonaws.com/javadeployment:dev-ecs-$CODEBUILD_BUILD_NUMBER
