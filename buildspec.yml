@@ -4,7 +4,7 @@ phases:
   # Install phase: Installing dependencies (Maven, Docker)
   install:
     runtime-versions:
-      java: openjdk17  # Use Java 17 (or change it to your Java version)
+      java: corretto17
     commands:
       # Installing Maven if it's not already available
       echo Installing Maven
