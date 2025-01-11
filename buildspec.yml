@@ -9,7 +9,7 @@ phases:
       - |
         set -x  # Enable verbose output
             # Logic for dev environment
-            echo "Running logic for dev environment."
+            echo "Running logic for dev environment"
             ls -la
             mvn clean install
             echo "Login to Amazon ECR"
